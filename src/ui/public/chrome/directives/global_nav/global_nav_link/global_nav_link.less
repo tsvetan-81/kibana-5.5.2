@@ -5,6 +5,7 @@
   width: @global-nav-closed-width;
   height: @app-icon-height;
   line-height: @app-line-height;
+  opacity: 0.5;
 
   &.is-global-nav-link-disabled {
     opacity: 0.5;
@@ -14,9 +15,17 @@
     }
   }
 
-  &:hover,
+  &:hover {
+    background-color: @app-links-hover-background;
+    opacity: 1;
+    .global-nav-link__anchor {
+      color: @white;
+      text-decoration: none;
+    }
+  }
   &.active {
     background-color: @app-links-active-background;
+    opacity: 1;
 
     .global-nav-link__anchor {
       color: @white;
@@ -48,6 +57,9 @@
     float: left;
     text-align: center;
     font-size: 1.7em;
+  }
+  #faicon1 {
+    font-size: 0.6em;
   }
 
     /**

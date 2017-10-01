@@ -32,7 +32,8 @@ module.factory('SavedDashboard', function (courier, config) {
         timeRestore: false,
         timeTo: undefined,
         timeFrom: undefined,
-        refreshInterval: undefined
+        refreshInterval: undefined,
+        filterSharingKey: ''
       },
 
       // if an indexPattern was saved with the searchsource of a SavedDashboard
@@ -64,7 +65,8 @@ module.factory('SavedDashboard', function (courier, config) {
         section: { type: 'integer' },
         value: { type: 'integer' }
       }
-    }
+    },
+    filterSharingKey: 'string'
   };
 
   // Order these fields to the top, the rest are alphabetical

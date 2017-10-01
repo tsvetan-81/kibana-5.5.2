@@ -5,7 +5,7 @@ import { DashboardConstants, createDashboardEditUrl } from '../dashboard_constan
 import { SortableProperties } from 'ui_framework/services';
 import { ConfirmationButtonTypes } from 'ui/modals';
 
-export function DashboardListingController($injector, $scope) {
+export function DashboardListingController($injector, $scope, $location) {
   const $filter = $injector.get('$filter');
   const confirmModal = $injector.get('confirmModal');
   const Notifier = $injector.get('Notifier');
@@ -71,6 +71,16 @@ export function DashboardListingController($injector, $scope) {
   this.filter = '';
 
   this.pager = pagerFactory.create(this.items.length, 20, 1);
+
+  $scope.$watch(function () {
+    return $location.search().edit;
+  },(editParam)=>{
+    let readOnlyMode = false;
+    if(editParam && editParam.toLowerCase() === 'true') {
+      readOnlyMode = true;
+    }
+    $scope.isReadOnlyMode = readOnlyMode;
+  });
 
   $scope.$watch(() => this.filter, () => {
     deselectAll();

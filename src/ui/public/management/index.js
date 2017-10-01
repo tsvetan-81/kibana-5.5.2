@@ -16,7 +16,7 @@ management.register('elasticsearch', {
 });
 
 management.register('kibana', {
-  display: 'Kibana',
+  display: 'Marble',
   order: 30,
 });
 

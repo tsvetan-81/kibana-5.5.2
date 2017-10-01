@@ -28,8 +28,9 @@
 >
   <div
     class="filter"
-    ng-class="{ negate: filter.meta.negate, disabled: filter.meta.disabled }"
+    ng-class="{ negate: filter.meta.negate, disabled: filter.meta.disabled,'no-touch':!isTouchDevice(),'mock-hovered':filter.meta.mockHovered }"
     ng-repeat="filter in filters track by $index"
+    ng-click="toggleMockHoverStatus(filter)"
     data-test-subj="filter filter-{{ filter.meta.disabled ? 'disabled' : 'enabled' }} {{ filter.meta.key ? 'filter-key-' + filter.meta.key : '' }} {{ filter.meta.value ? 'filter-value-' + filter.meta.value : '' }}"
   >
     <div class="filter-description">

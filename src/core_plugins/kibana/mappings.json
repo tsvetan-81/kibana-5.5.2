@@ -87,6 +87,9 @@
       "description": {
         "type": "text"
       },
+      "filterSharingKey": {
+        "type": "text"
+      },
       "hits": {
         "type": "integer"
       },

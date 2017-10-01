@@ -89,7 +89,7 @@ module.exports = async function (kbnServer, server, config) {
     method: 'GET',
     handler: function (req, reply) {
       return reply.view('root_redirect', {
-        hashRoute: `${config.get('server.basePath')}/app/kibana`,
+        hashRoute: `${config.get('server.basePath')}/app/marble`,
         defaultRoute: getDefaultRoute(kbnServer),
       });
     }

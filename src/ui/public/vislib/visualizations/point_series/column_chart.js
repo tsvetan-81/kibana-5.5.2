@@ -1,9 +1,15 @@
 import _ from 'lodash';
+import Hammer from 'hammerjs';
+
 import { VislibVisualizationsPointSeriesProvider } from './_point_series';
 
 export function VislibVisualizationsColumnChartProvider(Private) {
 
   const PointSeries = Private(VislibVisualizationsPointSeriesProvider);
+  const isTouchDevice = function () {
+    return 'ontouchstart' in window        // works on most browsers
+      || navigator.maxTouchPoints;       // works on IE10/11 and Surface
+  };
 
   const defaults = {
     mode: 'normal',
@@ -27,6 +33,26 @@ export function VislibVisualizationsColumnChartProvider(Private) {
       super(handler, chartEl, chartData, seriesConfigArgs);
       this.seriesConfig = _.defaults(seriesConfigArgs || {}, defaults);
     }
+    /**
+     * Bind Hold Events on each Path
+     *
+     */
+    bindHammerPressEvent() {
+      if (!isTouchDevice()) {
+        //Do not add this event for non-touch browsers
+        return;
+      }
+      const hammerMc = new Hammer.Manager(this, { press: true });
+      const that = this;
+
+      hammerMc.add(new Hammer.Press({ time: 500 }));
+      hammerMc.on('press', function () {
+        if (that.__onclick) {
+          that.__onclick({ target: this });
+        }
+      });
+    }
+
 
     addBars(svg, data) {
       const self = this;
@@ -52,6 +78,7 @@ export function VislibVisualizationsColumnChartProvider(Private) {
       .append('rect')
       .attr('data-label', data.label)
       .attr('fill', () => color(data.label))
+      .each(self.bindHammerPressEvent)
       .attr('stroke', () => color(data.label));
 
       self.updateBars(bars);

@@ -1,7 +1,7 @@
 <nav
   class="global-nav"
   ng-class="{'is-global-nav-open': isGlobalNavOpen}"
-  ng-show="isVisible"
+  ng-hide="isHidden"
 >
 
   <!-- Logo -->
@@ -10,7 +10,7 @@
       ng-if="!logoBrand && !smallLogoBrand"
       aria-label="{{ appTitle }} Logo"
       class="logo kibana"
-    ></li>
+    >M A R B L E</li>
 
     <li
       ng-if="logoBrand"
@@ -45,8 +45,9 @@
         class="{{ globalNavToggleButton.classes }}"
         tooltip-content="globalNavToggleButton.tooltipContent"
         on-click="toggleGlobalNav($event)"
-        icon="'plugins/kibana/assets/play-circle.svg'"
         label="globalNavToggleButton.title"
+        faicon="globalNavToggleButton.faicon"
+        title="globalNavToggleButton.title"
       ></global-nav-link>
     </div>
   </div>

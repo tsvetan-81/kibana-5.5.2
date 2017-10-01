@@ -25,10 +25,15 @@ module.directive('globalNav', globalNavState => {
       function updateGlobalNav() {
         const isOpen = globalNavState.isOpen();
         scope.isGlobalNavOpen = isOpen;
+        scope.isHidden = globalNavState.isHidden() || !scope.isVisible;
+        if (scope.isHidden) {
+          angular.element('.app-wrapper').css('left', 0);
+        }
         scope.globalNavToggleButton = {
           classes: isOpen ? 'global-nav-link--close' : undefined,
           title: isOpen ? 'Collapse' : 'Expand',
           tooltipContent: isOpen ? 'Collapse side bar' : 'Expand side bar',
+          faicon: isOpen ? 'fa fa-arrow-right' : 'fa fa-navicon'
         };
 
         // Notify visualizations, e.g. the dashboard, that they should re-render.

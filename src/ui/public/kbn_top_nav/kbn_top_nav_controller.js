@@ -1,10 +1,10 @@
-import { capitalize, isArray, isFunction } from 'lodash';
+import { capitalize, isArray, isFunction, startsWith } from 'lodash';
 
 import chrome from 'ui/chrome';
 import filterTemplate from 'ui/chrome/config/filter.html';
 import intervalTemplate from 'ui/chrome/config/interval.html';
 
-export function KbnTopNavControllerProvider($compile) {
+export function KbnTopNavControllerProvider($compile, $location) {
   return class KbnTopNavController {
     constructor(opts = []) {
       if (opts instanceof KbnTopNavController) {
@@ -24,7 +24,15 @@ export function KbnTopNavControllerProvider($compile) {
     }
 
     isVisible() {
-      return chrome.getVisible();
+      const nonav = $location.search().nonav;
+      const path = $location.path();
+      let isNonav = false;
+      if (nonav) {
+        if (typeof nonav === 'string') {
+          isNonav = nonav.toLowerCase() === 'true';
+        }
+      }
+      return chrome.getVisible() && !(isNonav && startsWith(path, '/dashboard'));
     }
 
     addItems(rawOpts) {

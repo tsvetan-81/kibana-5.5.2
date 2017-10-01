@@ -5,13 +5,13 @@ export function TemplateRenderbotProvider(Private, $compile, $rootScope) {
   const Renderbot = Private(VisRenderbotProvider);
 
   _.class(TemplateRenderbot).inherits(Renderbot);
-  function TemplateRenderbot(vis, $el, uiState) {
+  function TemplateRenderbot(vis, $el, uiState, searchSource) {
     TemplateRenderbot.Super.call(this, vis, $el, uiState);
 
     this.$scope = $rootScope.$new();
     this.$scope.vis = vis;
     this.$scope.uiState = uiState;
-
+    this.$scope.searchSource = searchSource;
     $el.html($compile(this.vis.type.template)(this.$scope));
   }
 

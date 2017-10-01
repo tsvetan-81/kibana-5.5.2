@@ -18,20 +18,14 @@ block content
       display: -ms-flexbox;
       display: flex;
       width: 620px;
-      height: 185px;
+      height: 100px;
       padding: 0;
       text-align: center;
-      background: #3caed2;
     }
 
     .kibanaLoader__logo {
-      width: 150px;
-      height: 100%;
-      padding: 20px;
-      background-color: #E8488B;
-      -webkit-animation: colorShift 3s infinite;
-              animation: colorShift 3s infinite;
-      box-shadow: inset -10px 0 20px -10px rgba(0, 0, 0, 0.5);
+      width: 120px;
+      height: 120px;
     }
 
     .kibanaLoader__content {
@@ -52,8 +46,8 @@ block content
           -ms-flex: 1 1 auto;
               flex: 1 1 auto;
       color: white;
-      font-size: 38px;
-      font-weight: 300;
+      font-size: 24px;
+      font-weight: 360;
       font-family: "Open Sans", "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
       padding-bottom: 12px;
     }
@@ -89,11 +83,11 @@ block content
     }
 
   .kibanaWelcomeView
-    .kibanaLoader
-      .kibanaLoader__logo
-        .kibanaWelcomeLogo
-      .kibanaLoader__content
-        | #{i18n('UI-WELCOME_MESSAGE')}
+    .kibanaLoader__logo
+      .kibanaWelcomeLogo
+     .kibanaLoader
+       .kibanaLoader__content
+             | #{i18n('UI-WELCOME_MESSAGE')}
 
   script.
     window.onload = function () {
@@ -125,6 +119,7 @@ block content
           err.style['text-align'] = 'center';
           err.style['background'] = '#F44336';
           err.style['padding'] = '25px';
+          //- err.innerText = 'Marble did not load properly. Check the server output for more information.';
           err.innerText = '#{i18n('UI-WELCOME_ERROR')}';
 
           document.body.innerHTML = err.outerHTML;

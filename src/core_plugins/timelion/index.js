@@ -15,6 +15,7 @@ module.exports = function (kibana) {
     require: ['kibana', 'elasticsearch'],
     uiExports: {
       app: {
+        hidden: true,
         title: 'Timelion',
         order: -1000,
         description: 'Time series expressions for everything',

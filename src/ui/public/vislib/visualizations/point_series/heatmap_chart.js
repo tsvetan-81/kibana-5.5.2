@@ -2,6 +2,13 @@ import _ from 'lodash';
 import moment from 'moment';
 import { VislibVisualizationsPointSeriesProvider } from './_point_series';
 import { getHeatmapColors } from 'ui/vislib/components/color/heatmap_color';
+import Hammer from 'hammerjs';
+
+const isTouchDevice = function () {
+  return 'ontouchstart' in window        // works on most browsers
+    || navigator.maxTouchPoints;       // works on IE10/11 and Surface
+};
+
 
 export function VislibVisualizationsHeatmapChartProvider(Private) {
 
@@ -192,6 +199,7 @@ export function VislibVisualizationsHeatmapChartProvider(Private) {
         .attr('data-label', label)
         .attr('fill', z)
         .attr('style', 'cursor: pointer; stroke: black; stroke-width: 0.1px')
+        .each(this.bindHammerPressEvent)
         .style('display', d => {
           return d.hide ? 'none' : 'initial';
         });
@@ -252,6 +260,26 @@ export function VislibVisualizationsHeatmapChartProvider(Private) {
       }
 
       return squares.selectAll('rect');
+    }
+
+      /**
+     * Bind Hold Events on each Path
+     *
+     */
+    bindHammerPressEvent() {
+      if (!isTouchDevice()) {
+        //Do not add this event for non-touch browsers
+        return;
+      }
+      const hammerMc = new Hammer.Manager(this, { press: true });
+      const that = this;
+
+      hammerMc.add(new Hammer.Press({ time: 500 }));
+      hammerMc.on('press', function () {
+        if (that.__onclick) {
+          that.__onclick({ target: this });
+        }
+      });
     }
 
     /**

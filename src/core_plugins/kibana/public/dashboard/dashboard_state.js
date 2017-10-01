@@ -13,6 +13,7 @@ function getStateDefaults(dashboard) {
   return {
     title: dashboard.title,
     description: dashboard.description,
+    filterSharingKey: dashboard.filterSharingKey,
     timeRestore: dashboard.timeRestore,
     panels: dashboard.panelsJSON ? JSON.parse(dashboard.panelsJSON) : [],
     options: dashboard.optionsJSON ? JSON.parse(dashboard.optionsJSON) : {},
@@ -140,6 +141,10 @@ export class DashboardState {
     return this.appState.description;
   }
 
+  getFilterSharingKey() {
+    return this.appState.filterSharingKey;
+  }
+
   setDescription(description) {
     this.appState.description = description;
     this.saveState();
@@ -154,8 +159,18 @@ export class DashboardState {
     this.saveState();
   }
 
+  setFilterSharingKey(key) {
+    this.appState.filterSharingKey = key;
+    // this.savedDashboard.key = key;
+    this.saveState();
+  }
+
   getAppState() {
     return this.appState;
+  }
+
+  setQuery(q) {
+    return this.appState.query = q;
   }
 
   getQuery() {
@@ -367,6 +382,7 @@ export class DashboardState {
     const timeRestoreObj = _.pick(timeFilter.refreshInterval, ['display', 'pause', 'section', 'value']);
     this.savedDashboard.title = this.getTitle();
     this.savedDashboard.description = this.getDescription();
+    this.savedDashboard.filterSharingKey = this.getFilterSharingKey();
     this.savedDashboard.timeRestore = this.appState.timeRestore;
     this.savedDashboard.panelsJSON = toJson(this.appState.panels);
     this.savedDashboard.uiStateJSON = toJson(this.uiState.getChanges());

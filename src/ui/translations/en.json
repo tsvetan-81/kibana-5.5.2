@@ -1,4 +1,4 @@
 {
-  "UI-WELCOME_MESSAGE": "Loading",
-  "UI-WELCOME_ERROR": ""
+  "UI-WELCOME_MESSAGE": "L O A D I N G &nbsp;&nbsp;&nbsp; M A R B L E",
+  "UI-WELCOME_ERROR": "Marble did not load properly. Check the server output for more information."
 }

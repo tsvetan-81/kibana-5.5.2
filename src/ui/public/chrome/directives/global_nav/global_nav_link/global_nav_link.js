@@ -17,6 +17,8 @@ module.directive('globalNavLink', chrome => {
       url: '=',
       kbnRoute: '=',
       icon: '=',
+      faicon: '=',
+      title: '=',
       label: '=',
     },
     template: globalNavLinkTemplate,

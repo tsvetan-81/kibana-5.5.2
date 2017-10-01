@@ -1,4 +1,5 @@
 import _ from 'lodash';
+// import $ from 'jquery';
 import angular from 'angular';
 import { uiModules } from 'ui/modules';
 import uiRoutes from 'ui/routes';
@@ -34,6 +35,8 @@ const app = uiModules.get('app/dashboard', [
   'kibana/notify',
   'kibana/typeahead',
 ]);
+
+const localStorageMessageName = "DashboardConditionChanged";
 
 uiRoutes
   .when(DashboardConstants.CREATE_NEW_DASHBOARD_URL, {
@@ -95,6 +98,7 @@ app.directive('dashboardApp', function ($injector) {
       $scope.queryDocLinks = documentationLinks.query;
 
       const dash = $scope.dash = $route.current.locals.dash;
+
       if (dash.id) {
         docTitle.change(dash.title);
       }
@@ -116,10 +120,10 @@ app.directive('dashboardApp', function ($injector) {
           timeRestore: dashboardState.getTimeRestore(),
           title: dashboardState.getTitle(),
           description: dashboardState.getDescription(),
+          filterSharingKey: dashboardState.getFilterSharingKey()
         };
         $scope.panels = dashboardState.getPanels();
       };
-
       // Part of the exposed plugin API - do not remove without careful consideration.
       this.appStatus = {
         dirty: !dash.id
@@ -130,6 +134,9 @@ app.directive('dashboardApp', function ($injector) {
       });
 
       dashboardState.applyFilters(dashboardState.getQuery(), filterBar.getFilters());
+
+      // $(window).on('updateForSharing', messageReceived);
+
       let pendingVisCount = _.size(dashboardState.getPanels());
 
       timefilter.enabled = true;
@@ -170,10 +177,25 @@ app.directive('dashboardApp', function ($injector) {
       };
 
       $scope.filterResults = function () {
+        if(dashboardState.getFilterSharingKey() !== '') {
+          messageBroadcast({
+            'dashboardQueryKey': dashboardState.getQuery(),
+            'filterSharingKey': dashboardState.getFilterSharingKey(),
+            'uid': (new Date).getTime() + Math.random()
+          });
+        }
         dashboardState.applyFilters($scope.model.query, filterBar.getFilters());
         $scope.refresh();
       };
-
+      $scope.isReadonlyMode = true;
+      $scope.$watch(()=>{
+        return $location.search().edit;
+      },(editParam)=>{
+        if(typeof editParam !== 'undefined') {
+          $scope.isReadonlyMode = !(editParam && editParam.toLowerCase() === 'true');
+        }
+        updateViewMode(dashboardState.getViewMode());
+      });
       // called by the saved-object-finder when a user clicks a vis
       $scope.addVis = function (hit, showToast = true) {
         pendingVisCount++;
@@ -207,6 +229,7 @@ app.directive('dashboardApp', function ($injector) {
       $scope.$watch('model.description', () => dashboardState.setDescription($scope.model.description));
       $scope.$watch('model.title', () => dashboardState.setTitle($scope.model.title));
       $scope.$watch('model.timeRestore', () => dashboardState.setTimeRestore($scope.model.timeRestore));
+      $scope.$watch('model.filterSharingKey', () => dashboardState.setFilterSharingKey($scope.model.filterSharingKey));
       $scope.indexPatterns = [];
 
       $scope.registerPanelIndexPattern = (panelIndex, pattern) => {
@@ -219,10 +242,19 @@ app.directive('dashboardApp', function ($injector) {
         $scope.indexPatterns = dashboardState.getPanelIndexPatterns();
       };
 
-      $scope.$listen(timefilter, 'fetch', $scope.refresh);
+      $scope.$listen(timefilter, 'fetch', function () {
+        if(dashboardState.getFilterSharingKey() !== '') {
+          messageBroadcast({
+            'dashboardTimeKey': timefilter.time,
+            'filterSharingKey': dashboardState.getFilterSharingKey(),
+            'uid': (new Date).getTime() + Math.random()
+          });
+        }
+        $scope.refresh();
+      });
 
       function updateViewMode(newMode) {
-        $scope.topNavMenu = getTopNavConfig(newMode, navActions); // eslint-disable-line no-use-before-define
+        $scope.topNavMenu = getTopNavConfig(newMode, navActions, $scope.isReadonlyMode); // eslint-disable-line no-use-before-define
         dashboardState.switchViewMode(newMode);
         $scope.dashboardViewMode = newMode;
       }
@@ -305,6 +337,13 @@ app.directive('dashboardApp', function ($injector) {
 
       // update root source when filters update
       $scope.$listen(filterBar, 'update', function () {
+        if(dashboardState.getFilterSharingKey() !== '') {
+          messageBroadcast({
+            'dashboardFilterKey': filterBar.getFilters(),
+            'filterSharingKey': dashboardState.getFilterSharingKey(),
+            'uid': (new Date).getTime() + Math.random()
+          });
+        }
         dashboardState.applyFilters($scope.model.query, filterBar.getFilters());
       });
 
@@ -321,6 +360,48 @@ app.directive('dashboardApp', function ($injector) {
       function updateTheme() {
         dashboardState.getDarkTheme() ? setDarkTheme() : setLightTheme();
       }
+
+       // Use local storage for dashboard filter sync notifications.
+       // Set message in local storage and clear it right away.
+       function messageBroadcast(message)
+       {
+          // $(window).trigger('updateForSharing', [JSON.stringify(message)]);
+         // localStorage.setItem(localStorageMessageName, JSON.stringify(message));
+       }
+
+       // When receive message, check whether it is for dashboard filter sync.
+       // If yes, then update the notified dashboard, sync the filter conditions.
+       function messageReceived(ev, data)
+       {
+         // localStorage.removeItem(localStorageMessageName);
+         // Only listen to the dashboard condition changed messages. So ignore other messages.
+         // if (ev.originalEvent.key != localStorageMessageName) {
+         //   return;
+         // }
+
+         var message=JSON.parse(data);
+         // ignore empty msg or msg reset
+         if (!message) return;
+
+         if(message.filterSharingKey === dashboardState.getFilterSharingKey()) {
+           // sync the conditions to slave dashboards.
+           if (message.dashboardQueryKey !== undefined) {
+             dashboardState.setQuery(message.dashboardQueryKey);
+      	     dashboardState.applyFilters(dashboardState.getQuery(), filterBar.getFilters());
+              // dashboardState.applyFilters($scope.model.query, filterBar.getFilters());
+             // dashboardState.saveState();
+           } else if(message.dashboardFilterKey !== undefined) {
+             filterBar.replaceFilters(message.dashboardFilterKey);
+      	     dashboardState.applyFilters(dashboardState.getQuery(), filterBar.getFilters());
+             // dashboardState.applyFilters($scope.model.query, filterBar.getFilters());
+             // dashboardState.saveState();
+             //if(not changed) return;
+           } else if(message.dashboardTimeKey !== undefined) {
+            timefilter.time = message.dashboardTimeKey;
+           }
+         }
+         $scope.refresh();
+       }
 
       function setDarkTheme() {
         chrome.removeApplicationClass(['theme-light']);

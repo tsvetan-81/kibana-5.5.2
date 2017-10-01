@@ -1,10 +1,6 @@
 <div
   class="global-nav-link {{classes}}"
   ng-class="{ active: isActive, 'is-global-nav-link-disabled': isDisabled }"
-  tooltip="{{ tooltipContent }}"
-  tooltip-placement="right"
-  tooltip-popup-delay="0"
-  tooltip-append-to-body="1"
 >
   <a
     class="global-nav-link__anchor"
@@ -21,7 +17,13 @@
       >
 
       <span
-        ng-if="!icon"
+         ng-if="faicon"
+         id="faicon1"
+         class="{{faicon}}"
+      >
+      </span>
+      <span
+        ng-if="!icon && !faicon" 
         class="global-nav-link__icon-placeholder"
         data-test-subj="appLinkIconPlaceholder"
       >

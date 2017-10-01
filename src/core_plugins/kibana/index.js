@@ -16,7 +16,7 @@ import mappings from './mappings.json';
 const mkdirp = Promise.promisify(mkdirpNode);
 
 module.exports = function (kibana) {
-  const kbnBaseUrl = '/app/kibana';
+  const kbnBaseUrl = '/app/marble';
   return new kibana.Plugin({
     id: 'kibana',
     config: function (Joi) {
@@ -30,7 +30,7 @@ module.exports = function (kibana) {
     uiExports: {
       hacks: ['plugins/kibana/dev_tools/hacks/hide_empty_tools'],
       app: {
-        id: 'kibana',
+        id: 'marble',
         title: 'Kibana',
         listed: false,
         description: 'the kibana you know and love',
@@ -108,7 +108,8 @@ module.exports = function (kibana) {
           order: 9001,
           url: '/app/kibana#/dev_tools',
           description: 'development tools',
-          icon: 'plugins/kibana/assets/wrench.svg'
+          icon: 'plugins/kibana/assets/wrench.svg',
+          hidden: true
         }, {
           id: 'kibana:management',
           title: 'Management',

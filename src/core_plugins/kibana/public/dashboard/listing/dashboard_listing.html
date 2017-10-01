@@ -64,6 +64,7 @@
           aria-label="Create new dashboard"
           data-test-subj="newDashboardLink"
           ng-if="listingController.getSelectedItemsCount() === 0"
+          ng-show="isReadOnlyMode"
           tooltip="Create new dashboard"
           tooltip-append-to-body="true"
         >
@@ -107,7 +108,8 @@
           Looks like you don&rsquo;t have any dashboards. Let&rsquo;s create some!
         </div>
 
-        <div class="kuiPromptForItems__actions">
+        <div class="kuiPromptForItems__actions"
+             ng-show="isReadOnlyMode">
           <a
             class="kuiButton kuiButton--primary kuiButton--iconText"
             data-test-subj="createDashboardPromptButton"

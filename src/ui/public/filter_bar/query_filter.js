@@ -73,6 +73,26 @@ export function FilterBarQueryFilterProvider(Private, $rootScope, getAppState, g
     });
   };
 
+  queryFilter.replaceFilters = function (filters, global) {
+    if (global === undefined) {
+      let configDefault = config.get('filters:pinnedByDefault');
+
+      if (configDefault === false || configDefault === true) {
+        global = configDefault;
+      }
+    }
+
+    // Determine the state for the new filter (whether to pass the filter through other apps or not)
+    let appState = getAppState();
+    let filterState = (global) ? globalState : appState;
+
+    if (!_.isArray(filters)) {
+      filters = [filters];
+    }
+
+    filterState.filters = filters;
+  };
+
   /**
    * Removes the filter from the proper state
    * @param {object} matchFilter The filter to remove

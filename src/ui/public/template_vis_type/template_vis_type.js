@@ -16,8 +16,8 @@ export function TemplateVisTypeProvider(Private) {
     }
   }
 
-  TemplateVisType.prototype.createRenderbot = function (vis, $el, uiState) {
-    return new TemplateRenderbot(vis, $el, uiState);
+  TemplateVisType.prototype.createRenderbot = function (vis, $el, uiState, searchSource) {
+    return new TemplateRenderbot(vis, $el, uiState, searchSource);
   };
 
   return TemplateVisType;

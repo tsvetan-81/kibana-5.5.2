@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import $ from 'jquery';
 import template from 'ui/filter_bar/filter_bar.html';
 import 'ui/directives/json_input';
 import '../filter_editor';
@@ -16,6 +17,7 @@ export { disableFilter, enableFilter, toggleFilterDisabled } from './lib/disable
 
 
 const module = uiModules.get('kibana');
+const localStorageMessageName = "DashboardConditionChanged";
 
 module.directive('filterBar', function (Private, Promise, getAppState) {
   const mapAndFlattenFilters = Private(FilterBarLibMapAndFlattenFiltersProvider);
@@ -49,10 +51,24 @@ module.directive('filterBar', function (Private, Promise, getAppState) {
 
       $scope.state = getAppState();
 
+      $scope.isTouchDevice = function () {
+        return 'ontouchstart' in window        // works on most browsers
+          || navigator.maxTouchPoints;       // works on IE10/11 and Surface
+      };
+
       $scope.showAddFilterButton = () => {
         return _.compact($scope.indexPatterns).length > 0;
       };
 
+      $scope.toggleMockHoverStatus = function (filter) {
+        if (filter.meta.mockHovered) {
+          filter.meta.mockHovered = false;
+        }
+        else{
+          filter.meta.mockHovered = true;
+        }
+
+      };
       $scope.applyFilters = function (filters) {
         addAndInvertFilters(filterAppliedAndUnwrap(filters));
         $scope.newFilters = [];
@@ -156,6 +172,7 @@ module.directive('filterBar', function (Private, Promise, getAppState) {
 
       function updateFilters() {
         const filters = queryFilter.getFilters();
+
         mapAndFlattenFilters(filters).then(function (results) {
           // used to display the current filters in the state
           $scope.filters = _.sortBy(results, function (filter) {

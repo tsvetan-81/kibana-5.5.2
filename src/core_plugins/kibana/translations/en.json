@@ -1,5 +1,5 @@
 {
-  "UI-WELCOME_MESSAGE": "Loading Kibana",
+  "UI-WELCOME_MESSAGE": "Loading CB Marble",
   "UI-WELCOME_ERROR": "Kibana did not load properly. Check the server output for more information.",
   "KIBANA-CONFIGURE_INDEX_PATTERN": "Configure an index pattern",
   "KIBANA-MUST_CONFIGURE_INDEX_PATTERN": "In order to use Kibana you must configure at least one index pattern. Index patterns are used to identify the Elasticsearch index to run search and analytics against. They are also used to configure fields.",

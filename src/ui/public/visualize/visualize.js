@@ -156,7 +156,7 @@ uiModules
 
         if (oldVis) $scope.renderbot = null;
         if (vis) {
-          $scope.renderbot = vis.type.createRenderbot(vis, $visEl, $scope.uiState);
+          $scope.renderbot = vis.type.createRenderbot(vis, $visEl, $scope.uiState, $scope.searchSource);
         }
       }));
 
